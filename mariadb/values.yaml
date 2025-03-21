@@ -1,0 +1,16 @@
+image:
+  repository: mariadb
+  pullPolicy: IfNotPresent
+  tag: 10.11
+
+database_service_name: mariadb
+memory_limit: 512Mi
+mysql_database: testdb
+mysql_password: testu
+mysql_root_password: testur
+mysql_user: testu
+namespace: openshift
+pvc:
+  volume_capacity: 1Gi
+  app_code: "something"
+  netapp_nfs: false
