@@ -79,7 +79,7 @@ spec:
           limits:
             memory: {{ .Values.memory_limit }}
         volumeMounts:
-        - mountPath: /var/lib/mysql/data
+        - mountPath: /var/lib/mysql
           name: {{ .Values.database_service_name }}-data
       volumes:
       - name: {{ .Values.database_service_name }}-data
