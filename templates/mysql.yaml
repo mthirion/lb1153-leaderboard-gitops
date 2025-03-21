@@ -121,7 +121,7 @@ metadata:
   finalizers:
     - kubernetes.io/pvc-protection
   labels:
-    app.kubernetes.io/name: {{ include "ctfd.name" . }}-mysql
+    app.kubernetes.io/name: {{ .Chart.Name }}-mysql
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     app.kubernetes.io/instance: {{ .Release.Name }}-mysql
     app.kubernetes.io/managed-by: {{ .Release.Service }}
