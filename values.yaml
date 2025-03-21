@@ -1,4 +1,4 @@
-namespace: ctf-leaderboard
+namespace: leaderboard
 
 ctfd:
   replicaCount: 1
