@@ -1,34 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    template.alpha.openshift.io/wait-for-ready: "true"
-    image.openshift.io/triggers: |-
-      [
-        {
-          "from": {
-            "kind": "ImageStreamTag",
-            "name": "mariadb:{{ .Values.mariadb_version }}"
-          },
-          "fieldPath": "spec.template.spec.containers[0].image"
-        }
-      ]
+  name: {{ include "mariadb.name" . }}
   labels:
+    {{- include "mariadb.labels" . | nindent 4 }}
     app.openshift.io/runtime: mariadb
-    template: mariadb-persistent-template
-  name: {{ .Values.database_service_name }}
-
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: {{ .Values.database_service_name }}
+      {{- include "mariadb.selectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        name: {{ .Values.database_service_name }}
+        {{- include "mariadb.selectorLabels" . | nindent 8 }}
     spec:
       containers:
       - env:
@@ -36,22 +23,22 @@ spec:
           valueFrom:
             secretKeyRef:
               key: database-user
-              name: {{ .Values.database_service_name }}
+              name: {{ include "mariadb.name" . }}
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-password
-              name: {{ .Values.database_service_name }}
+              name: {{ include "mariadb.name" . }}
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
               key: database-root-password
-              name: {{ .Values.database_service_name }}
+              name: {{ include "mariadb.name" . }}
         - name: MYSQL_DATABASE
           valueFrom:
             secretKeyRef:
               key: database-name
-              name: {{ .Values.database_service_name }}
+              name: {{ include "mariadb.name" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}" 
         imagePullPolicy: {{ .Values.image.pullPolicy }}   
         livenessProbe:
@@ -80,8 +67,8 @@ spec:
             memory: {{ .Values.memory_limit }}
         volumeMounts:
         - mountPath: /var/lib/mysql
-          name: {{ .Values.database_service_name }}-data
+          name: {{ include "mariadb.name" . }}-data
       volumes:
-      - name: {{ .Values.database_service_name }}-data
+      - name: {{ include "mariadb.name" . }}-data
         persistentVolumeClaim:
-          claimName: {{ .Values.database_service_name }}
+          claimName: {{ include "mariadb.name" . }}

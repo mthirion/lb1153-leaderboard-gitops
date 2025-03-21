@@ -3,7 +3,7 @@ image:
   pullPolicy: IfNotPresent
   tag: 10.11
 
-database_service_name: mariadb
+nameOverride: mariadb
 memory_limit: 512Mi
 mysql_database: testdb
 mysql_password: testu

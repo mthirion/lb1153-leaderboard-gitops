@@ -1,15 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    template.openshift.io/expose-uri: mysql://{.spec.clusterIP}:{.spec.ports[?(.name=="mariadb")].port}
+  name: {{ include "mariadb.name" . }}
   labels:
+    {{- include "mariadb.labels" . | nindent 4 }}
     app.openshift.io/runtime: mariadb
-    template: mariadb-persistent-template
-  name: {{ .Values.database_service_name }}
 spec:
   ports:
   - name: mariadb
     port: 3306
   selector:
-    name: {{ .Values.database_service_name }}
+    {{- include "mariadb.selectorLabels" . | nindent 4 }}
