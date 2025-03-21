@@ -36,9 +36,9 @@ nginx:
 mysql:
   replicaCount: 1
   image:
-    repository: quay.io/cloud-architecture-workshop/globex-store-db
+    repository: mariadb
     pullPolicy: IfNotPresent
-    tag: latest
+    tag: 10.11
 
 redis:
   replicaCount: 1
