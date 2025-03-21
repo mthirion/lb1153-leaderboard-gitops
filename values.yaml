@@ -1,0 +1,48 @@
+namespace: ctf-leaderboard
+
+ctfd:
+  replicaCount: 1
+  image:
+    repository: quay.io/cloud-architecture-workshop/globex-store-db
+    pullPolicy: IfNotPresent
+    tag: latest
+  env:
+    open:
+      WORKERS: 1
+      DATABASE_URL: mysql+pymysql://ctfd:ctfd@ctf-mysql:3306/ctfd
+      REDIS_URL: redis://ctfd-redis:6379
+    secret:
+      DATABASE_URL: mysql+pymysql://ctfd:ctfd@ctfd-mysql:3306/ctfd
+      REDIS_URL: redis://ctfd-redis:6379
+    existingSecret:
+    existingSecretMappings:
+      DATABASE_URL: mysql+pymysql://ctfd:ctfd@ctfd-mysql:3306/ctfd
+      REDIS_URL: redis://ctfd-redis:6379
+  persistence:
+    uploads:
+      enabled: true
+      accessMode: ReadWriteOnce
+      size: 1Gi
+  port: 8000    
+
+nginx:
+  replicaCount: 1
+  image:
+    repository: quay.io/cloud-architecture-workshop/globex-store-db
+    pullPolicy: IfNotPresent
+    tag: latest
+
+
+mysql:
+  replicaCount: 1
+  image:
+    repository: quay.io/cloud-architecture-workshop/globex-store-db
+    pullPolicy: IfNotPresent
+    tag: latest
+
+redis:
+  replicaCount: 1
+  image:
+    repository: quay.io/cloud-architecture-workshop/globex-store-db
+    pullPolicy: IfNotPresent
+    tag: latest
