@@ -1,0 +1,134 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-mysql
+  namespace: {{ .Values.namespace }}
+  labels:
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.openshift.io/runtime: mysql        
+    app.kubernetes.io/name: {{ .Chart.Name }}-mysql
+    app.kubernetes.io/instance: {{ .Release.Name }}-mysql
+    app.kubernetes.io/managed-by: {{ .Release.Service }}    
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+spec:
+  strategy:
+    type: Recreate
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    activeDeadlineSeconds: 21600
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Chart.Name }}-mysql
+      app.kubernetes.io/instance: {{ .Release.Name }}-mysql
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Chart.Name }}-mysql
+        app.kubernetes.io/instance: {{ .Release.Name }}-mysql
+    spec:
+      volumes:
+        - name: {{ .Chart.Name }}-mysql-data
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-mysql
+      containers:
+        - resources:
+            limits:
+              memory: 512Mi
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - '-i'
+                - '-c'
+                - MYSQL_PWD="$MYSQL_PASSWORD" mysqladmin -u $MYSQL_USER ping
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: mysql
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - '-i'
+                - '-c'
+                - MYSQL_PWD="$MYSQL_PASSWORD" mysqladmin -u $MYSQL_USER ping
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-mysql
+                  key: database-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-mysql
+                  key: database-password
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-mysql
+                  key: database-root-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-mysql
+                  key: database-name
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          volumeMounts:
+            - name: {{ .Chart.Name }}-mysql-data
+              mountPath: /var/lib/mysql/data
+          terminationMessagePolicy: File
+          image: "{{ .Values.mysql.image.repository }}:{{ .Values.mysql.image.tag }}"
+          imagePullPolicy: {{ .Values.mysql.image.pullPolicy }}
+      restartPolicy: Always
+      dnsPolicy: ClusterFirst
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-mysql
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}-mysql
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+spec:
+  ports:
+    - name: {{ .Chart.Name }}-mysql
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+  selector:
+    app.kubernetes.io/name: {{ .Chart.Name }}-mysql
+    app.kubernetes.io/instance: {{ .Release.Name }}-mysql
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Chart.Name }}-mysql
+  finalizers:
+    - kubernetes.io/pvc-protection
+  labels:
+    app.kubernetes.io/name: {{ include "ctfd.name" . }}-mysql
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.kubernetes.io/instance: {{ .Release.Name }}-mysql
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---  
