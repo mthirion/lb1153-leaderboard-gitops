@@ -37,37 +37,3 @@ nginx:
     repository: quay.io/cloud-architecture-workshop/globex-store-db
     pullPolicy: IfNotPresent
     tag: latest
-
-mariadb:
-  # Enable mariadb server provided by helm:
-  enabled: True
-  image:
-    repository: registry.redhat.io/rhel9/mariadb-1011
-    pullPolicy: IfNotPresent
-    tag: 10.11
-  nameOverride: mariadb
-  memory_limit: 512Mi
-  mysql_database: testdb
-  mysql_password: testu
-  mysql_root_password: testur
-  mysql_user: testu
-  namespace: openshift
-  pvc:
-    volume_capacity: 5Gi
-    netapp_nfs: false
-
-redis:
-  # Enable Redis server provided by helm:
-  enabled: True
-  image:
-    repository: registry.redhat.io/rhel9/redis-7
-    pullPolicy: IfNotPresent
-    tag: 9.5
-
-  nameOverride: redis
-  memory_limit: 512Mi
-  redis_password: testp # TODO: must define a default value for .redis_password'
-  pvc:
-    volume_capacity: 5Gi
-    app_code: "something"
-    netapp_nfs: false 

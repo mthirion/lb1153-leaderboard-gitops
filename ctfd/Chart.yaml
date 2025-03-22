@@ -7,10 +7,8 @@ appVersion: 1.0.0
 
 dependencies:
   - name: mariadb
-    version: 20.2.2
-    repository: ../mariadb
+    repository: file://../mariadb
     condition: mariadb.enabled
   - name: redis
-    version: 20.7.1
-    repository: ../redis
+    repository: file://../redis
     condition: redis.enabled
