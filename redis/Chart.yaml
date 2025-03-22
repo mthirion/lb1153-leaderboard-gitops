@@ -1,0 +1,9 @@
+apiVersion: v2
+name: redhat-redis-persistent
+description: |-
+  This content is experimental, do not use it in production. Redis in-memory data structure store, with persistent storage.
+  NOTE: You must have persistent volumes available in your cluster to use this template.
+version: 1.0.0
+annotations:
+  charts.openshift.io/name: Red Hat Redis in-memory data structure store, with persistent storage (experimental)
+appVersion: 1.0.0

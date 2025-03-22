@@ -2,7 +2,6 @@ image:
   repository: mariadb
   pullPolicy: IfNotPresent
   tag: 10.11
-
 nameOverride: mariadb
 memory_limit: 512Mi
 mysql_database: testdb

@@ -1,0 +1,12 @@
+image:
+  repository: redis
+  pullPolicy: IfNotPresent
+  tag: 6-el8
+
+nameOverride: redis
+memory_limit: 512Mi
+redis_password: testp # TODO: must define a default value for .redis_password'
+pvc:
+  volume_capacity: 1Gi
+  app_code: "something"
+  netapp_nfs: false
