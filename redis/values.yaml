@@ -1,7 +1,7 @@
 image:
-  repository: redis
+  repository: registry.redhat.io/rhel9/redis-7
   pullPolicy: IfNotPresent
-  tag: 6-el8
+  tag: 9.5
 
 nameOverride: redis
 memory_limit: 512Mi

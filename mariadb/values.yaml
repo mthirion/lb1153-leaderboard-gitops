@@ -1,5 +1,5 @@
 image:
-  repository: mariadb
+  repository: registry.redhat.io/rhel9/mariadb-1011
   pullPolicy: IfNotPresent
   tag: 10.11
 nameOverride: mariadb
