@@ -1,0 +1,73 @@
+ctfd:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/ctfd/ctfd
+    pullPolicy: IfNotPresent
+    tag: latest
+  resources:
+    limits:
+      cpu: "2"
+      memory: 2Gi
+    requests:
+      cpu: "1"
+      memory: 1Gi    
+  env:
+    - name: WORKERS
+      value: "2"
+    - name: ACCESS_LOG
+      value: "-"
+    - name: ERROR_LOG
+      value: "-"
+    - name: REVERSE_PROXY
+      value: "true"
+    - name: LOG_FOLDER
+      value: "/var/log/CTFd"
+    - name: UPLOAD_PROVIDER
+      value: "s3"  # The chart only supports S3
+  persistence:
+    uploads:
+      enabled: true
+      accessMode: ReadWriteOnce
+      size: 1Gi
+  port: 8000    
+
+nginx:
+  replicaCount: 1
+  image:
+    repository: quay.io/cloud-architecture-workshop/globex-store-db
+    pullPolicy: IfNotPresent
+    tag: latest
+
+mariadb:
+  # Enable mariadb server provided by helm:
+  enabled: True
+  image:
+    repository: registry.redhat.io/rhel9/mariadb-1011
+    pullPolicy: IfNotPresent
+    tag: 10.11
+  nameOverride: mariadb
+  memory_limit: 512Mi
+  mysql_database: testdb
+  mysql_password: testu
+  mysql_root_password: testur
+  mysql_user: testu
+  namespace: openshift
+  pvc:
+    volume_capacity: 5Gi
+    netapp_nfs: false
+
+redis:
+  # Enable Redis server provided by helm:
+  enabled: True
+  image:
+    repository: registry.redhat.io/rhel9/redis-7
+    pullPolicy: IfNotPresent
+    tag: 9.5
+
+  nameOverride: redis
+  memory_limit: 512Mi
+  redis_password: testp # TODO: must define a default value for .redis_password'
+  pvc:
+    volume_capacity: 5Gi
+    app_code: "something"
+    netapp_nfs: false 

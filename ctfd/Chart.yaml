@@ -1,0 +1,16 @@
+apiVersion: v2
+name: ctfd
+description: A Helm chart for CTFd
+type: application
+version: 1.0.0
+appVersion: 1.0.0
+
+dependencies:
+  - name: mariadb
+    version: 20.2.2
+    repository: ../mariadb
+    condition: mariadb.enabled
+  - name: redis
+    version: 20.7.1
+    repository: ../redis
+    condition: redis.enabled
