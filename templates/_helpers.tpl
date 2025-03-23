@@ -168,5 +168,5 @@ Create mariadb vars
 Create redis vars
 */}}
 {{- define "ctfd.REDIS_URL" -}}
-{{- printf "redis://:%s@%s" .Values.redis.redis_password .Values.redis.nameOverride -}}
+{{- printf "redis://:%s@%s:6379" .Values.redis.redis_password .Values.redis.nameOverride -}}
 {{- end -}}

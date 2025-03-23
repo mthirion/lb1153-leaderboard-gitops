@@ -3,33 +3,56 @@ ctfd:
   image:
     repository: ghcr.io/ctfd/ctfd
     pullPolicy: IfNotPresent
-    tag: latest
-  resources:
-    limits:
-      cpu: "2"
-      memory: 2Gi
-    requests:
-      cpu: "1"
-      memory: 1Gi    
+    tag: latest  
   env:
-    - name: WORKERS
-      value: "2"
-    - name: ACCESS_LOG
-      value: "-"
-    - name: ERROR_LOG
-      value: "-"
-    - name: REVERSE_PROXY
-      value: "true"
-    - name: LOG_FOLDER
-      value: "/var/log/CTFd"
-    - name: UPLOAD_PROVIDER
-      value: "s3"  # The chart only supports S3
+    open:
+      # Required if more than 1 worker (randomly generate)
+      SECRET_KEY: "ChangeMe!123"
+      # Amount of CTFd workers
+      WORKERS: 1
+      # If behing ingress proxy or nginx:
+      REVERSE_PROXY: True
+  secret:
+  existingSecret:
+  # Stores Environment Variable to secret key name mappings
+  existingSecretMappings:
+    DATABASE_URL:
+    REDIS_URL:
+
+  config:
+    enabled: false
+    settings: |
+      [server]
+      SECRET_KEY =
+      [extra]
+      # Set needed config here
+
+  probes:
+    liveness:
+      initialDelaySeconds: 25
+      periodSeconds: 5
+      timeoutSeconds: 2
+      successThreshold: 1
+      failureThreshold: 5
+    readiness:
+      initialDelaySeconds: 20
+      periodSeconds: 5
+      timeoutSeconds: 2
+      successThreshold: 1
+      failureThreshold: 5
+
+  # For uploads to the CTFd server (images and other content)
+  # Not for DB
   persistence:
     uploads:
       enabled: true
+      #ReadWriteMany may be desired here if using multiple CTFd pods      
       accessMode: ReadWriteOnce
-      size: 1Gi
-  port: 8000    
+      size: 10Gi
+      # existingClaim: 
+      labels: {}
+      # name: value
+      # storageClass: "-"
 
 nginx:
   replicaCount: 1

@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ctfd.name" . }}
+  labels:
+    {{- include "ctfd.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.ctfd.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "ctfd.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ctfd.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ include "ctfd.name" . }}
+          image: "{{ .Values.ctfd.image.repository }}:{{ .Values.ctfd.image.tag }}"
+          imagePullPolicy: {{ .Values.ctfd.image.pullPolicy }}
+          env:
+          {{- range $name, $value := .Values.ctfd.env.open }}
+            {{- if not (empty $value) }}
+          - name: {{ $name | quote }}
+            value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.ctfd.persistence.uploads.enabled }}
+          - name: UPLOAD_FOLDER
+            value: /var/uploads
+          {{- end }}
+          {{- if .Values.ctfd.env.existingSecret }}
+            {{- $secret_name := .Values.ctfd.env.existingSecret }}
+            {{- range $name, $key := .Values.ctfd.env.existingSecretMappings }}
+              {{- if not ( empty $key) }}
+          - name: {{ $name | quote }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ $secret_name | quote }}
+                key: {{ $key | quote }}
+              {{- end }}
+            {{- end }}
+          {{- else }}
+            {{- $secret_name := include "ctfd.name" . }}
+          {{/*
+            Database vars:
+          */}}
+              {{- $dburl := include "ctfd.DATABASE_URL" . -}}
+              {{- if not ( empty $dburl ) }}
+          - name: "DATABASE_URL"
+            valueFrom:
+              secretKeyRef:
+                name: {{ $secret_name }}
+                key: "DATABASE_URL"
+              {{- end }}
+              {{- $redisurl := include "ctfd.REDIS_URL" . -}}
+              {{- if not ( empty $redisurl) }}
+          - name: "REDIS_URL"
+            valueFrom:
+              secretKeyRef:
+                name: {{ $secret_name }}
+                key: "REDIS_URL"
+              {{- end }}
+          {{/*
+            Extra secrets:
+          */}}
+            {{- range $name, $value := .Values.ctfd.env.secret }}
+              {{- if not ( empty $value) }}
+          - name: {{ $name | quote }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ $secret_name }}
+                key: {{ $name | quote }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 8000
+          volumeMounts:
+          {{- if .Values.ctfd.persistence.uploads.enabled }}
+          - mountPath: /var/uploads
+            name: uploads
+          {{- end }}
+          {{- if .Values.ctfd.config.enabled }}
+          - name: config-volume
+            mountPath: /opt/CTFd/CTFd/config.ini
+            subPath: config.ini
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8000
+{{ toYaml .Values.ctfd.probes.liveness | indent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8000
+{{ toYaml .Values.ctfd.probes.readiness | indent 12 }}
+      volumes:
+      - name: uploads
+    {{- if .Values.ctfd.persistence.uploads.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.ctfd.persistence.uploads.existingClaim | default (include "ctfd.name" .) }}
+    {{- else }}
+        emptyDir: {}
+    {{- end }}
+    {{- if .Values.ctfd.config.enabled }}
+      - name: config-volume
+        configMap:
+          name: ctfd-config-ini
+    {{- end }}

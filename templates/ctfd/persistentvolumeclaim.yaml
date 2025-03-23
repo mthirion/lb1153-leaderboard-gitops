@@ -1,0 +1,24 @@
+{{- if and .Values.persistence.uploads.enabled (not .Values.persistence.uploads.existingClaim) -}}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "ctfd.name" . }}
+  labels:
+    {{- include "ctfd.labels" . | nindent 4 }}
+{{- if .Values.ctfd.persistence.uploads.labels }}
+{{ toYaml .Values.ctfd.persistence.labels | indent 4 }}
+{{- end }}
+spec:
+  accessModes:
+    - {{ .Values.ctfd.persistence.uploads.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.ctfd.persistence.uploads.size | quote }}
+{{- if .Values.ctfd.persistence.uploads.storageClass }}
+  {{- if (eq "-" .Values.ctfd.persistence.uploads.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: "{{ .Values.ctfd.persistence.uploads.storageClass }}"
+  {{- end }}
+{{- end }}
+{{- end }}
