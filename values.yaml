@@ -1,3 +1,5 @@
+namespace: leaderboard
+
 ctfd:
   replicaCount: 1
   image:
