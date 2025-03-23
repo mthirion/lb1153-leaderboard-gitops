@@ -1,4 +1,4 @@
-{{- if and .Values.persistence.uploads.enabled (not .Values.persistence.uploads.existingClaim) -}}
+{{- if and .Values.ctfd.persistence.uploads.enabled (not .Values.ctfd.persistence.uploads.existingClaim) -}}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
