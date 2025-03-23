@@ -1,9 +1,0 @@
-apiVersion: v2
-name: redhat-mariadb-persistent
-description: |-
-  This content is experimental, do not use it in production. MariaDB database service, with persistent storage.
-  NOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this chart.
-version: 1.0.0
-annotations:
-  charts.openshift.io/name: Red Hat MariaDB database service, with persistent storage (experimental)
-appVersion: 1.0.0

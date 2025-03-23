@@ -2,23 +2,23 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ include "mariadb.name" . }}
-  {{ if .Values.pvc.netapp_nfs }}
+  {{ if .Values.mariadb.pvc.netapp_nfs }}
   annotations:
     trident.netapp.io/reclaimPolicy: Delete
   {{ end }}
   labels:
     {{- include "mariadb.labels" . | nindent 4 }}
     app.openshift.io/runtime: mariadb
-    {{ if .Values.pvc.netapp_nfs }}
-    paas.redhat.com/appcode: {{ .Values.pvc.app_code }}
+    {{ if .Values.mariadb.pvc.netapp_nfs }}
+    paas.redhat.com/appcode: {{ .Values.mariadb.pvc.app_code }}
     {{ end }}
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.pvc.volume_capacity }}
-  {{ if .Values.pvc.netapp_nfs }}
+      storage: {{ .Values.mariadb.pvc.volume_capacity }}
+  {{ if .Values.mariadb.pvc.netapp_nfs }}
   storageClassName: netapp-nfs
   volumeMode: Filesystem
   {{ end }}

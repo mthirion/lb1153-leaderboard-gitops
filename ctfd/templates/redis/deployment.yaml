@@ -25,7 +25,7 @@ spec:
               key: database-password
               name: {{ include "redis.name" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}" 
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
         livenessProbe:
           initialDelaySeconds: 30
           tcpSocket:
@@ -46,7 +46,7 @@ spec:
           timeoutSeconds: 1
         resources:
           limits:
-            memory: {{ .Values.memory_limit }}
+            memory: {{ .Values.redis.memory_limit }}
         securityContext:
           capabilities: {}
           privileged: false

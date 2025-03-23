@@ -40,7 +40,7 @@ spec:
               key: database-name
               name: {{ include "mariadb.name" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
         livenessProbe:
           exec:
             command:
@@ -64,7 +64,7 @@ spec:
           timeoutSeconds: 1
         resources:
           limits:
-            memory: {{ .Values.memory_limit }}
+            memory: {{ .Values.mariadb.memory_limit }}
         volumeMounts:
         - mountPath: /var/lib/mysql
           name: {{ include "mariadb.name" . }}-data
