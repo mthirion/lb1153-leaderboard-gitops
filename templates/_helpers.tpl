@@ -155,3 +155,18 @@ Selector labels
 app.kubernetes.io/name: {{ include "redis.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+
+{{/*
+Create mariadb vars
+*/}}
+{{- define "ctfd.DATABASE_URL" -}}
+{{- printf "mysql+pymysql://%s:%s@%s:3306/%s" .Values.mariadb.mysql_user .Values.mariadb.mysql_password .Values.mariadb.nameOverride  .Values.mariadb.mysql_database -}}
+{{- end -}}
+
+{{/*
+Create redis vars
+*/}}
+{{- define "ctfd.REDIS_URL" -}}
+{{- printf "redis://:%s@%s" .Values.redis.redis_password .Values.redis.nameOverride -}}
+{{- end -}}
