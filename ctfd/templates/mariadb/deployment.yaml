@@ -39,7 +39,7 @@ spec:
             secretKeyRef:
               key: database-name
               name: {{ include "mariadb.name" . }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.mariadb.image.repository }}:{{ .Values.mariadb.image.tag }}"
         imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
         livenessProbe:
           exec:

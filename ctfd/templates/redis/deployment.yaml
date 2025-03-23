@@ -24,7 +24,7 @@ spec:
             secretKeyRef:
               key: database-password
               name: {{ include "redis.name" . }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}" 
+        image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}" 
         imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
         livenessProbe:
           initialDelaySeconds: 30
