@@ -1,7 +1,7 @@
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
-  name: {{ include "ctfd.name" . }}-secure
+  name: {{ include "ctfd.name" . }}
   labels:
     {{- include "ctfd.labels" . | nindent 4 }}
     router: internal
@@ -18,20 +18,3 @@ spec:
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
----
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: {{ include "ctfd.name" . }}
-  labels:
-    {{- include "ctfd.labels" . | nindent 4 }}
-    router: internal
-spec:
-  host: >-
-    {{ include "ctfd.name" . }}-{{ .Values.namespace }}.{{ .Values.clusterURL }}
-  to:
-    kind: Service
-    name: ctfd
-    weight: 100    
-  port:
-    targetPort: http
