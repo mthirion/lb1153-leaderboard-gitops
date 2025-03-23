@@ -53,9 +53,9 @@ redis:
 
 mariadb:
   image:
-    repository: registry.redhat.io/rhel9/mariadb-1011
+    repository: registry.redhat.io/rhel9/mariadb-1011 
     pullPolicy: IfNotPresent
-    tag: 10.11
+    tag: 9.5
   nameOverride: mariadb
   memory_limit: 512Mi
   mysql_database: testdb
