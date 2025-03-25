@@ -87,6 +87,9 @@ spec:
             mountPath: /opt/CTFd/CTFd/config.ini
             subPath: config.ini
           {{- end }}
+          - name: {{ include "ctfd.name" . }}-db-init
+            mountPath: /tmp
+            readOnly: true
           livenessProbe:
             httpGet:
               path: /healthcheck
@@ -110,3 +113,6 @@ spec:
         configMap:
           name: ctfd-config-ini
     {{- end }}
+      - name: {{ include "ctfd.name" . }}-db-init
+        configMap:
+          name: {{ include "ctfd.name" . }}-db-init
