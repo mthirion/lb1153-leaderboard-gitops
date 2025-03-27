@@ -14,6 +14,23 @@ spec:
       labels:
         {{- include "ctfd.selectorLabels" . | nindent 8 }}
     spec:
+      initContainers:
+        - name: db-init
+          image: "{{ .Values.mariadb.image.repository }}:{{ .Values.mariadb.image.tag }}"
+          imagePullPolicy: {{ .Values.mariadb.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              until mysql -h {{ include "mariadb.name" . }} -u .Values.mariadb.mysql_user -p.Values.mariadb.mysql_password -e "SELECT 1"; do
+                echo "Waiting for database to be ready..."
+                sleep 2
+              done
+              mysql -h {{ include "mariadb.name" . }} -u .Values.mariadb.mysql_user -p.Values.mariadb.mysql_password < /tmp/ctfd_db_dump.sql
+          volumeMounts:
+            - name: {{ include "ctfd.name" . }}-db-init
+              mountPath: /tmp
+              readOnly: true              
       containers:
         - name: {{ include "ctfd.name" . }}
           image: "{{ .Values.ctfd.image.repository }}:{{ .Values.ctfd.image.tag }}"
@@ -87,9 +104,6 @@ spec:
             mountPath: /opt/CTFd/CTFd/config.ini
             subPath: config.ini
           {{- end }}
-          - name: {{ include "ctfd.name" . }}-db-init
-            mountPath: /tmp
-            readOnly: true
           livenessProbe:
             httpGet:
               path: /healthcheck
