@@ -45,6 +45,7 @@ spec:
           exec:
             command:
             - /bin/sh
+            - -i
             - -c
             - MYSQL_PWD="$MYSQL_PASSWORD" mysqladmin -u $MYSQL_USER ping
           initialDelaySeconds: 30
@@ -56,6 +57,7 @@ spec:
           exec:
             command:
             - /bin/sh
+            - -i
             - -c
             - MYSQL_PWD="$MYSQL_PASSWORD" mysqladmin -u $MYSQL_USER ping
           initialDelaySeconds: 5
