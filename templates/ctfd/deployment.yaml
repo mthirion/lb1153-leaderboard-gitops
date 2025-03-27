@@ -22,11 +22,11 @@ spec:
             - sh
             - -c
             - |
-              until mysql -h {{ include "mariadb.name" . }} -u .Values.mariadb.mysql_user -p.Values.mariadb.mysql_password -e "SELECT 1"; do
+              until mysql -h {{ include "mariadb.name" . }} -u {{ .Values.mariadb.mysql_user }} -p{{ .Values.mariadb.mysql_password }} -e "SELECT 1"; do
                 echo "Waiting for database to be ready..."
                 sleep 2
               done
-              mysql -h {{ include "mariadb.name" . }} -u .Values.mariadb.mysql_user -p.Values.mariadb.mysql_password < /tmp/ctfd_db_dump.sql
+              mysql -h {{ include "mariadb.name" . }} -u {{ .Values.mariadb.mysql_user }} -p{{ .Values.mariadb.mysql_password }} < /tmp/ctfd_db_dump.sql
           volumeMounts:
             - name: {{ include "ctfd.name" . }}-db-init
               mountPath: /tmp
