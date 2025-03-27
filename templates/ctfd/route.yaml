@@ -7,7 +7,7 @@ metadata:
     router: internal
 spec:
   host: >-
-    {{ include "ctfd.name" . }}-{{ .Values.namespace }}.{{ .Values.clusterURL }}
+    {{ include "ctfd.name" . }}-{{ .Values.namespace }}.{{ .Values.appsSubdomain }}
   port:
     targetPort: http
   wildcardPolicy: None   

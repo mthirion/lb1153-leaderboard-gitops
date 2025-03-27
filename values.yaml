@@ -1,4 +1,4 @@
-clusterURL: {{ gitea_customize_apps_subdomain }}
+appsSubdomain: {{ gitea_customize_apps_subdomain }}
 namespace: leaderboard
 ctfd:
   numUsers: 4
