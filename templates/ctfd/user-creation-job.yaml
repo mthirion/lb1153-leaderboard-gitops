@@ -18,12 +18,6 @@ spec:
             - -c
             - |
               echo "Starting user creation job..."
-              # Wait for CTFd service to be ready
-              until curl -s -o /dev/null -w "%{http_code}" http://{{ include "ctfd.name" . }}:8000/healthcheck | grep -q 200; do
-                echo "Waiting for CTFd to be ready..."
-                sleep 2
-              done
-              echo "CTFd is ready, creating users..."
               for i in $(seq 1 "$NUM_USERS"); do
                 USERNAME="user-$i"
                 EMAIL="$USERNAME@example.com"
