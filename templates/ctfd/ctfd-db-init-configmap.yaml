@@ -8,7 +8,7 @@ data:
   ctfd_db_dump.sql: |
     /*M!999999\- enable the sandbox mode */ 
     -- MariaDB dump 10.19  Distrib 10.11.10-MariaDB, for Linux (x86_64)
-    --
+    -- "{{ .Values.mariadb.image.repository }}:{{ .Values.mariadb.image.tag }}"
     -- Host: localhost    Database: testdb
     -- ------------------------------------------------------
     -- Server version	10.11.10-MariaDB

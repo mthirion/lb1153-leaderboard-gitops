@@ -1,6 +1,7 @@
 clusterURL:
 namespace: leaderboard
 ctfd:
+  numUsers: 4
   replicaCount: 1
   image:
     repository: ghcr.io/ctfd/ctfd
