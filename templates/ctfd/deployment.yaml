@@ -24,20 +24,20 @@ spec:
             - |
               echo "Starting db-init ..."          
               sleep 20
-              until mysql -h $mariadb-service-name -u $DB_USER -p$DB_PASSWORD -e "SELECT 1"; do
+              until mysql -h $DB_SERVICE_NAME -u $DB_USER -p$DB_PASSWORD -e "SELECT 1"; do
                 echo "Waiting for database to be ready..."
                 sleep 2
               done
               sleep 20
               echo "Executing the SQL script ..."
-              mysql -h $mariadb-service-name -u $DB_USER -p$DB_PASSWORD < /tmp/ctfd_db_dump.sql
+              mysql -h $DB_SERVICE_NAME -u $DB_USER -p$DB_PASSWORD < /tmp/ctfd_db_dump.sql
               sleep 20
           env:
             - name: DB_USER
               value: {{ .Values.mariadb.mysql_user }}
             - name: DB_PASSWORD
               value: {{ .Values.mariadb.mysql_password }}
-            - name: mariadb-service-name
+            - name: DB_SERVICE_NAME
               value: {{ include "mariadb.name" . }}  
           volumeMounts:
             - name: {{ include "ctfd.name" . }}-db-init
