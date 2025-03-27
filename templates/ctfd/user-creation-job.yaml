@@ -22,18 +22,12 @@ spec:
                 USERNAME="$USER_PREFIX-$i"
                 EMAIL="$USERNAME@example.com"
                 PASSWORD="$USER_DEFAULT_PASSWORD"
-                # Fetch nonce
-                NONCE=$(curl -s -H "Authorization: Token $CTFD_API_KEY" https://$CTFD_ROUTE/api/v1/users | grep -o '"nonce":"[^"]*"' | cut -d'"' -f4)
-                if [ -z "$NONCE" ]; then
-                  echo "Failed to retrieve nonce for $USERNAME" >&2
-                  exit 1
-                fi
                 # Create user
                 RESPONSE=$(curl -s -X POST \
                   -H "Authorization: Token $CTFD_API_KEY" \
                   -H "Content-Type: application/json" \
-                  -d "{\"name\":\"$USERNAME\",\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"nonce\":\"$NONCE\"}" \
-                  https://$CTFD_ROUTE//api/v1/users)
+                  -d "{\"name\":\"$USERNAME\",\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"type\":\"user\"}" \
+                  https://$CTFD_ROUTE/api/v1/users)
                 if echo "$RESPONSE" | grep -q '"success": true'; then
                   echo "Successfully created $USERNAME"
                 else
@@ -44,7 +38,7 @@ spec:
               echo "All users created successfully"
           env:
             - name: USER_COUNT
-              value: {{ .Values.ctfd.userCount }}
+              value: {{ .Values.ctfd.userCount | quote}}
             - name: USER_PREFIX
               value: {{ .Values.ctfd.userPrefix }}                
             - name: USER_DEFAULT_PASSWORD
