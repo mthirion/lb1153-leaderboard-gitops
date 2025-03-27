@@ -18,12 +18,12 @@ spec:
             - -c
             - |
               echo "Starting user creation job..."
-              for i in $(seq 1 "$NUM_USERS"); do
-                USERNAME="user-$i"
+              for i in $(seq 1 "$USER_COUNT"); do
+                USERNAME="$USER_PREFIX-$i"
                 EMAIL="$USERNAME@example.com"
-                PASSWORD="password123"
+                PASSWORD="$USER_DEFAULT_PASSWORD"
                 # Fetch nonce
-                NONCE=$(curl -s -H "Authorization: Token $CTFD_API_KEY" http://{{ include "ctfd.name" . }}:8000/api/v1/users | grep -o '"nonce":"[^"]*"' | cut -d'"' -f4)
+                NONCE=$(curl -s -H "Authorization: Token $CTFD_API_KEY" https://$CTFD_ROUTE/api/v1/users | grep -o '"nonce":"[^"]*"' | cut -d'"' -f4)
                 if [ -z "$NONCE" ]; then
                   echo "Failed to retrieve nonce for $USERNAME" >&2
                   exit 1
@@ -33,7 +33,7 @@ spec:
                   -H "Authorization: Token $CTFD_API_KEY" \
                   -H "Content-Type: application/json" \
                   -d "{\"name\":\"$USERNAME\",\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"nonce\":\"$NONCE\"}" \
-                  http://{{ include "ctfd.name" . }}:8000/api/v1/users)
+                  https://$CTFD_ROUTE//api/v1/users)
                 if echo "$RESPONSE" | grep -q '"success": true'; then
                   echo "Successfully created $USERNAME"
                 else
@@ -43,8 +43,14 @@ spec:
               done
               echo "All users created successfully"
           env:
-            - name: NUM_USERS
-              value: {{ .Values.ctfd.numUsers | default "5" | quote }}
+            - name: USER_COUNT
+              value: {{ .Values.ctfd.userCount }}
+            - name: USER_PREFIX
+              value: {{ .Values.ctfd.userPrefix }}                
+            - name: USER_DEFAULT_PASSWORD
+              value: {{ .Values.ctfd.userDefaultPassword }}              
+            - name: CTFD_ROUTE
+              value: {{ include "ctfd.name" . }}-{{ .Values.namespace }}.{{ .Values.appsSubdomain }} 
             - name: CTFD_API_KEY
               valueFrom:
                 secretKeyRef:

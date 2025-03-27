@@ -1,7 +1,9 @@
 appsSubdomain: {{ gitea_customize_apps_subdomain }}
 namespace: leaderboard
 ctfd:
-  numUsers: 4
+  userCount: 4
+  userPrefix: user
+  userDefaultPassword: summit2025
   replicaCount: 1
   image:
     repository: ghcr.io/ctfd/ctfd
