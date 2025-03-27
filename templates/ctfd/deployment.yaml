@@ -23,16 +23,13 @@ spec:
             - -c
             - |
               echo "Starting db-init ..."          
-              sleep 10
               until mysql -h $DB_SERVICE_NAME -u $DB_USER -p$DB_PASSWORD -e "SELECT 1"; do
                 echo "Waiting for database to be ready..."
                 sleep 2
               done
-              sleep 10
               echo "Executing the SQL script ..."
               mysql -h $DB_SERVICE_NAME -u $DB_USER -p$DB_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DB_NAME"
               mysql -h $DB_SERVICE_NAME -u $DB_USER -p$DB_PASSWORD -D $DB_NAME < /tmp/ctfd_db_dump.sql
-              sleep 10
           env:
             - name: DB_USER
               value: {{ .Values.mariadb.mysql_user }}
