@@ -116,5 +116,3 @@ spec:
       - name: {{ include "ctfd.name" . }}-db-init
         configMap:
           name: {{ include "ctfd.name" . }}-db-init
-        persistentVolumeClaim:
-          claimName: {{  (include "ctfd.name" .) }}
