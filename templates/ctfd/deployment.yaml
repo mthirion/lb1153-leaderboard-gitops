@@ -4,6 +4,8 @@ metadata:
   name: {{ include "ctfd.name" . }}
   labels:
     {{- include "ctfd.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"    
 spec:
   replicas: {{ .Values.ctfd.replicaCount }}
   selector:
@@ -109,7 +111,7 @@ spec:
           volumeMounts:
           {{- if .Values.ctfd.persistence.uploads.enabled }}
           - mountPath: /var/uploads
-            name: uploads
+            name: uploads-volume
           {{- end }}
           {{- if .Values.ctfd.config.enabled }}
           - name: config-volume
@@ -127,7 +129,7 @@ spec:
               port: 8000
 {{ toYaml .Values.ctfd.probes.readiness | indent 12 }}
       volumes:
-      - name: uploads
+      - name: uploads-volume
     {{- if .Values.ctfd.persistence.uploads.enabled }}
         persistentVolumeClaim:
           claimName: {{ .Values.ctfd.persistence.uploads.existingClaim | default (include "ctfd.name" .) }}
