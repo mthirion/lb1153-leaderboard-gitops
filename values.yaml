@@ -1,14 +1,14 @@
 appsSubdomain: {{ gitea_customize_apps_subdomain }}
 namespace: leaderboard
 ctfd:
-  userCount: 4
-  userPrefix: user
-  userDefaultPassword: summit2025
+  userCount: {{ gitea_customize_gitea_num_users }}
+  userPrefix: {{ gitea_customize_gitea_user_name_base }}
+  userDefaultPassword: {{ gitea_customize_gitea_user_password }}
   replicaCount: 1
   image:
     repository: ghcr.io/ctfd/ctfd
     pullPolicy: IfNotPresent
-    tag: latest  
+    tag: latest
   env:
     open:
       # Required if more than 1 worker (randomly generate)
@@ -51,10 +51,10 @@ ctfd:
   persistence:
     uploads:
       enabled: true
-      #ReadWriteMany may be desired here if using multiple CTFd pods      
+      #ReadWriteMany may be desired here if using multiple CTFd pods
       accessMode: ReadWriteOnce
       size: 10Gi
-      # existingClaim: 
+      # existingClaim:
       labels: {}
       # name: value
       # storageClass: "-"
@@ -81,7 +81,7 @@ redis:
 
 mariadb:
   image:
-    repository: registry.redhat.io/rhel9/mariadb-1011 
+    repository: registry.redhat.io/rhel9/mariadb-1011
     pullPolicy: IfNotPresent
     tag: 9.5
   nameOverride: mariadb
