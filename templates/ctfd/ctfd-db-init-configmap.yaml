@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "ctfd.name" . }}-db-init
-  labels:
-    {{- include "ctfd.labels" . | nindent 4 }}  
-data:
-  ctfd_db_dump.sql: |-
-    {{ .Files.Get "files/ctfd_db_dump.sql" | b64enc | indent 4 }}

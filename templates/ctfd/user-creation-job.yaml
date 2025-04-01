@@ -1,25 +1,27 @@
+{{- if and .Values.ctfd.userCreation.enabled -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "ctfd.name" . }}-user-creation
   labels:
     {{- include "ctfd.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"    
 spec:
-  ttlSecondsAfterFinished: 300  # Clean up job 5 minutes after completion
   backoffLimit: 3  # Retry up to 3 times on failure
   template:
     spec:
-      restartPolicy: OnFailure
+      restartPolicy: OnFailure 
       containers:
         - name: user-creator
-          image: curlimages/curl:latest
+          image: "{{ .Values.ctfd.userCreation.image.repository }}:{{ .Values.ctfd.userCreation.image.tag }}"          
           command:
             - sh
             - -c
             - |
               echo "Starting user creation job..."
               for i in $(seq 1 "$USER_COUNT"); do
-                USERNAME="$USER_PREFIX-$i"
+                USERNAME="$USER_PREFIX$i"
                 EMAIL="$USERNAME@example.com"
                 PASSWORD="$USER_DEFAULT_PASSWORD"
                 # Create user
@@ -38,11 +40,11 @@ spec:
               echo "All users created successfully"
           env:
             - name: USER_COUNT
-              value: {{ .Values.ctfd.userCount | quote}}
+              value: {{ .Values.ctfd.userCreation.userCount | quote}}
             - name: USER_PREFIX
-              value: {{ .Values.ctfd.userPrefix }}                
+              value: {{ .Values.ctfd.userCreation.userPrefix }}                
             - name: USER_DEFAULT_PASSWORD
-              value: {{ .Values.ctfd.userDefaultPassword }}              
+              value: {{ .Values.ctfd.userCreation.userDefaultPassword }}              
             - name: CTFD_ROUTE
               value: {{ include "ctfd.name" . }}-{{ .Values.namespace }}.{{ .Values.appsSubdomain }} 
             - name: CTFD_API_KEY
@@ -50,3 +52,4 @@ spec:
                 secretKeyRef:
                   name: {{ include "ctfd.name" . }}
                   key: "CTFD_API_KEY"
+{{- end }}                  

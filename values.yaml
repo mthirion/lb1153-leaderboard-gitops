@@ -1,9 +1,15 @@
 appsSubdomain: {{ gitea_customize_apps_subdomain }}
 namespace: leaderboard
 ctfd:
-  userCount: 4
-  userPrefix: user
-  userDefaultPassword: summit2025
+  userCreation:
+    enabled: false 
+    image:
+      repository: registry.redhat.io/openshift4/ose-tools-rhel9
+      pullPolicy: IfNotPresent
+      tag: latest
+    userCount: {{ gitea_customize_gitea_num_users }}
+    userPrefix: {{ gitea_customize_gitea_user_name_base }}
+    userDefaultPassword: {{ gitea_customize_gitea_user_password }}
   replicaCount: 1
   image:
     repository: ghcr.io/ctfd/ctfd
@@ -12,26 +18,11 @@ ctfd:
   env:
     open:
       # Required if more than 1 worker (randomly generate)
-      SECRET_KEY: "ChangeMe!123"
+      SECRET_KEY: "ZYqWHRHK4bGYc273ylwPae1"
       # Amount of CTFd workers
       WORKERS: 1
       # If behing ingress proxy or nginx:
       REVERSE_PROXY: True
-  secret:
-  existingSecret:
-  # Stores Environment Variable to secret key name mappings
-  existingSecretMappings:
-    DATABASE_URL:
-    REDIS_URL:
-
-  config:
-    enabled: false
-    settings: |
-      [server]
-      SECRET_KEY =
-      [extra]
-      # Set needed config here
-
   probes:
     liveness:
       initialDelaySeconds: 25
@@ -45,26 +36,8 @@ ctfd:
       timeoutSeconds: 2
       successThreshold: 1
       failureThreshold: 5
-
-  # For uploads to the CTFd server (images and other content)
-  # Not for DB
-  persistence:
-    uploads:
-      enabled: true
-      #ReadWriteMany may be desired here if using multiple CTFd pods      
-      accessMode: ReadWriteOnce
-      size: 10Gi
-      # existingClaim: 
-      labels: {}
-      # name: value
-      # storageClass: "-"
-
-nginx:
-  replicaCount: 1
-  image:
-    repository: quay.io/cloud-architecture-workshop/globex-store-db
-    pullPolicy: IfNotPresent
-    tag: latest
+  pvc:
+    volume_capacity: 5Gi
 
 redis:
   image:
@@ -73,11 +46,9 @@ redis:
     tag: 9.5
   nameOverride: redis
   memory_limit: 512Mi
-  redis_password: testp # TODO: must define a default value for .redis_password'
+  redis_password: oQx2b2x4B5L
   pvc:
     volume_capacity: 1Gi
-    app_code: "something"
-    netapp_nfs: false
 
 mariadb:
   image:
@@ -86,12 +57,9 @@ mariadb:
     tag: 9.5
   nameOverride: mariadb
   memory_limit: 512Mi
-  mysql_database: testdb
-  mysql_password: testu
-  mysql_root_password: testur
-  mysql_user: testu
-  namespace: openshift
+  mysql_database: ctfddb
+  mysql_password: 5viD1QBxOmgYehAaWrANgg5
+  mysql_root_password: 4mteyiyyuk7591gosVp70a1
+  mysql_user: dbadmin
   pvc:
     volume_capacity: 1Gi
-    app_code: "something"
-    netapp_nfs: false

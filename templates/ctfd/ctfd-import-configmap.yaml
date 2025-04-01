@@ -4,6 +4,6 @@ metadata:
   name: {{ include "ctfd.name" . }}-import
   labels:
     {{- include "ctfd.labels" . | nindent 4 }}
-data:
+binaryData:
   ctf_backup.zip: |-
     {{ .Files.Get "files/ctf_backup.zip" | b64enc | indent 4 }}

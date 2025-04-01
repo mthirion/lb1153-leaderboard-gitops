@@ -2,24 +2,12 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ include "redis.name" . }}
-  {{ if .Values.redis.pvc.netapp_nfs }}
-  annotations:
-    trident.netapp.io/reclaimPolicy: Delete
-  {{ end }}
   labels:
     {{- include "redis.labels" . | nindent 4 }}
     app.openshift.io/runtime: redis
-    {{ if .Values.redis.pvc.netapp_nfs }}
-    paas.redhat.com/appcode: {{ .Values.redis.pvc.app_code }}
-    {{ end }}
-
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
       storage: {{ .Values.redis.pvc.volume_capacity }}
-  {{ if .Values.redis.pvc.netapp_nfs }}
-  storageClassName: netapp-nfs
-  volumeMode: Filesystem
-  {{ end }}
