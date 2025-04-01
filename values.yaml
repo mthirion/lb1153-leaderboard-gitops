@@ -1,5 +1,6 @@
 appsSubdomain: {{ gitea_customize_apps_subdomain }}
 namespace: leaderboard
+
 ctfd:
   userCreation:
     enabled: false 
@@ -14,7 +15,7 @@ ctfd:
   image:
     repository: ghcr.io/ctfd/ctfd
     pullPolicy: IfNotPresent
-    tag: latest  
+    tag: latest
   env:
     open:
       # Required if more than 1 worker (randomly generate)
@@ -52,7 +53,7 @@ redis:
 
 mariadb:
   image:
-    repository: registry.redhat.io/rhel9/mariadb-1011 
+    repository: registry.redhat.io/rhel9/mariadb-1011
     pullPolicy: IfNotPresent
     tag: 9.5
   nameOverride: mariadb
