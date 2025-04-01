@@ -95,3 +95,6 @@ mariadb:
     volume_capacity: 1Gi
     app_code: "something"
     netapp_nfs: false
+job:
+  image: registry.redhat.io/openshift4/ose-tools-rhel9@sha256:8037187950e7374a9c9bec4996033c9b24ce374920ef29047d4f63b4c20f3e6b
+  #image: curlimages/curl:latest
