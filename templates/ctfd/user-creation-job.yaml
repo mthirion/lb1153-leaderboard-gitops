@@ -12,7 +12,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: user-creator
-          image: curlimages/curl:latest
+          image: {{ .Values.job.image }}
           command:
             - sh
             - -c
