@@ -28,7 +28,7 @@ spec:
                 RESPONSE=$(curl -s -X POST \
                   -H "Authorization: Token $CTFD_API_KEY" \
                   -H "Content-Type: application/json" \
-                  -d "{\"name\":\"$USERNAME\",\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"type\":\"user\"}" \
+                  -d "{\"name\":\"$USERNAME\",\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"type\":\"user\",\"verified\":true}" \
                   https://$CTFD_ROUTE/api/v1/users)
                 if echo "$RESPONSE" | grep -q '"success": true'; then
                   echo "Successfully created $USERNAME"
