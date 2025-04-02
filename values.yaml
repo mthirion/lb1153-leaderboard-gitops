@@ -3,7 +3,7 @@ namespace: leaderboard
 
 ctfd:
   userCreation:
-    enabled: false 
+    enabled: true 
     image:
       repository: registry.redhat.io/openshift4/ose-tools-rhel9
       pullPolicy: IfNotPresent
