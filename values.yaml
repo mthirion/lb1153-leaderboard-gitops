@@ -2,8 +2,9 @@ appsSubdomain: {{ gitea_customize_apps_subdomain }}
 namespace: leaderboard
 
 ctfd:
+  cidr: {{ gitea_customize_cidr }}
   userCreation:
-    enabled: true 
+    enabled: true
     image:
       repository: registry.redhat.io/openshift4/ose-tools-rhel9
       pullPolicy: IfNotPresent
