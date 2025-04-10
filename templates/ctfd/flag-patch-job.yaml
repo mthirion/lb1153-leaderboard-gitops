@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "ctfd.name" . }}-flag-patch
+  labels:
+    {{- include "ctfd.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"    
+spec:
+  backoffLimit: 3  # Retry up to 3 times on failure
+  template:
+    spec:
+      restartPolicy: OnFailure 
+      containers:
+        - name: flag-patcher
+          image: "{{ .Values.ctfd.userCreation.image.repository }}:{{ .Values.ctfd.userCreation.image.tag }}"          
+          command:
+            - sh
+            - -c
+            - |
+              echo "Starting mission 1 flag patching ..."
+              RESPONSE=$(curl -s -X PATCH \
+                  -H "Authorization: Token $CTFD_API_KEY" \
+                  -H "Content-Type: application/json" \
+                  -d "{\"content\":\"$CIDR\",\"type\":\"static\",\"id\":\"1\"}" \
+                  https://$CTFD_ROUTE/api/v1/flags/1)
+              if echo "$RESPONSE" | grep -q '"success": true'; then
+                  echo "Mission 1 flag successfully patched"
+              else
+                  echo "Failed to patch mission 1 flag: $RESPONSE" >&2
+                  exit 1
+              fi
+          env:
+            - name: CIDR
+              value: {{ .Values.ctfd.cidr }}-8500                           
+            - name: CTFD_ROUTE
+              value: {{ include "ctfd.name" . }}-{{ .Values.namespace }}.{{ .Values.appsSubdomain }} 
+            - name: CTFD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ctfd.name" . }}
+                  key: "CTFD_API_KEY"              
