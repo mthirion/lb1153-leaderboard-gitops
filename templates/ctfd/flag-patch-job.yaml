@@ -22,8 +22,8 @@ spec:
               RESPONSE=$(curl -s -X PATCH \
                   -H "Authorization: Token $CTFD_API_KEY" \
                   -H "Content-Type: application/json" \
-                  -d "{\"content\":\"$CIDR\",\"type\":\"static\",\"id\":\"1\"}" \
-                  https://$CTFD_ROUTE/api/v1/flags/1)
+                  -d "{\"content\":\"$CIDR\",\"type\":\"static\",\"id\":\"9\"}" \
+                  https://$CTFD_ROUTE/api/v1/flags/7)
               if echo "$RESPONSE" | grep -q '"success": true'; then
                   echo "Mission 1 flag successfully patched"
               else
